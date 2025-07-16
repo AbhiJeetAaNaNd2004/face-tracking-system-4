@@ -21,6 +21,12 @@ import uvicorn
 from pathlib import Path
 # Add the current directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
+
+# Patch imports before importing anything else
+try:
+    import patch_imports
+except ImportError:
+    print("Warning: Could not load patch_imports")
 def parse_args():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
@@ -75,8 +81,6 @@ def check_dependencies():
         import fastapi
         import uvicorn
         import sqlalchemy
-        import cv2
-        import numpy
         return True
     except ImportError as e:
         print(f"❌ Missing required dependency: {e}")

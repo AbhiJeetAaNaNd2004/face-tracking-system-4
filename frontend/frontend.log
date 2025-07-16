@@ -1,0 +1,29 @@
+nohup: ignoring input
+
+> frontend@0.0.0 dev
+> vite
+
+Port 5173 is in use, trying another one...
+
+  VITE v7.0.4  ready in 151 ms
+
+  ➜  Local:   http://localhost:5174/
+  ➜  Network: http://172.30.0.2:5174/
+  ➜  Network: http://172.17.0.1:5174/
+11:56:18 AM [vite] (client) warning: <tr> cannot be child of <table>, according to HTML specifications. This can cause hydration errors or potentially disrupt future functionality.
+5  |      <p v-if="error" style="color:red">{{ error }}</p>
+6  |      <table border="1">
+7  |        <tr>
+   |        ^^^^
+8  |          <th>Employee ID</th>
+   |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9  |          <th>Timestamp</th>
+   |  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+10 |          <th>Camera</th>
+   |  ^^^^^^^^^^^^^^^^^^^^^^^
+11 |          <th>Event</th>
+   |  ^^^^^^^^^^^^^^^^^^^^^^
+12 |        </tr>
+   |  ^^^^^^^^^^^
+  Plugin: vite:vue
+  File: /workspace/frontend/src/components/AttendanceViewer.vue
