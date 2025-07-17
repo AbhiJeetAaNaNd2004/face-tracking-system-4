@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, desc, func
 from db.db_config import SessionLocal
-from db.db_models import Employee, FaceEmbedding, AttendanceRecord, Role, TrackingRecord, SystemLog, User
+from db.db_models import Employee, FaceEmbedding, AttendanceRecord, TrackingRecord, SystemLog, User
 import numpy as np
 import pickle
 import logging

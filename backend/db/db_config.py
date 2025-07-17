@@ -46,6 +46,14 @@ def close_db_session(db):
         db.close()
     except Exception as e:
         logging.error(f"Error closing database session: {e}")
+
+def get_db():
+    """FastAPI dependency for database session."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 def create_tables():
     try:
         Base.metadata.create_all(bind=engine, checkfirst=True)
