@@ -18,6 +18,7 @@ class Employee(Base):
     embeddings = relationship("FaceEmbedding", back_populates="employee")
     attendance_records = relationship("AttendanceRecord", back_populates="employee")
     tracking_records = relationship("TrackingRecord", back_populates="employee")
+
 class FaceEmbedding(Base):
     __tablename__ = 'face_embeddings'
     id = Column(Integer, primary_key=True, index=True)
@@ -29,6 +30,7 @@ class FaceEmbedding(Base):
     created_at = Column(DateTime, default=func.now())
     is_active = Column(Boolean, default=True)
     employee = relationship("Employee", back_populates="embeddings")
+
 class AttendanceRecord(Base):
     __tablename__ = 'attendance_records'
     id = Column(Integer, primary_key=True, index=True)
@@ -41,6 +43,7 @@ class AttendanceRecord(Base):
     is_valid = Column(Boolean, default=True)
     notes = Column(Text)
     employee = relationship("Employee", back_populates="attendance_records")
+
 class TrackingRecord(Base):
     __tablename__ = 'tracking_records'
     id = Column(Integer, primary_key=True, index=True)
@@ -53,6 +56,7 @@ class TrackingRecord(Base):
     timestamp = Column(DateTime, default=func.now())
     tracking_state = Column(String, default='active')
     employee = relationship("Employee", back_populates="tracking_records")
+
 class CameraConfig(Base):
     __tablename__ = 'camera_configs'
     id = Column(Integer, primary_key=True, index=True)
@@ -67,6 +71,7 @@ class CameraConfig(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
 class SystemLog(Base):
     __tablename__ = 'system_logs'
     id = Column(Integer, primary_key=True, index=True)
@@ -77,6 +82,7 @@ class SystemLog(Base):
     camera_id = Column(Integer)
     timestamp = Column(DateTime, default=func.now())
     additional_data = Column(JSON)
+
 class Role(Base):
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True, index=True)
@@ -85,11 +91,16 @@ class Role(Base):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     users = relationship("User", back_populates="role")
+
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)  # Changed from username to email
+    hashed_password = Column(String, nullable=False)
+    designation = Column(String, nullable=False)  # "employee" or "admin"
+    department = Column(String, nullable=False)
+    phone_number = Column(String, nullable=True)  # Optional phone number
+    is_master_admin = Column(Boolean, default=False)  # Master admin flag
     status = Column(String, default='active')  # active, inactive, suspended
     last_login_time = Column(DateTime)
     role_id = Column(Integer, ForeignKey('roles.id'))

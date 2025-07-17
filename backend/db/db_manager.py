@@ -7,7 +7,6 @@ import pickle
 import logging
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
-import psycopg2
 from io import BytesIO
 import threading
 
@@ -300,16 +299,134 @@ class DatabaseManager:
             if session:
                 session.close()
     def get_user_by_username(self, username: str) -> Optional[User]:
+        """Get user by username - now using email field"""
         session = None
         try:
             session = self.Session()
-            return session.query(User).filter(User.username == username).first()
+            user = session.query(User).filter(User.email == username).first()
+            if user:
+                # Eagerly load the role relationship to avoid DetachedInstanceError
+                if user.role:
+                    role_name = user.role.role_name
+                else:
+                    role_name = None
+                # Create a detached copy with the role data
+                user_data = User(
+                    id=user.id,
+                    email=user.email,
+                    hashed_password=user.hashed_password,
+                    designation=user.designation,
+                    department=user.department,
+                    phone_number=user.phone_number,
+                    is_master_admin=user.is_master_admin,
+                    status=user.status,
+                    last_login_time=user.last_login_time,
+                    role_id=user.role_id,
+                    created_at=user.created_at,
+                    updated_at=user.updated_at
+                )
+                # Add role name as attribute for easy access
+                user_data._role_name = role_name
+                return user_data
+            return None
         except Exception as e:
             self.logger.error(f"Error fetching user {username}: {e}")
             return None
         finally:
             if session:
                 session.close()
+
+    def get_user_by_email(self, email: str) -> Optional[User]:
+        """Get user by email"""
+        session = None
+        try:
+            session = self.Session()
+            return session.query(User).filter(User.email == email).first()
+        except Exception as e:
+            self.logger.error(f"Error fetching user {email}: {e}")
+            return None
+        finally:
+            if session:
+                session.close()
+
+    def create_user(self, email: str, password_hash: str, designation: str, department: str, phone_number: str = None, is_master_admin: bool = False, role_id: int = None) -> bool:
+        """Create a new user account"""
+        session = None
+        try:
+            session = self.Session()
+            
+            # Check if user already exists
+            existing_user = session.query(User).filter(User.email == email).first()
+            if existing_user:
+                return False
+            
+            # Validate designation
+            if designation not in ["employee", "admin"]:
+                return False
+            
+            # Create new user
+            user = User(
+                email=email,
+                hashed_password=password_hash,
+                designation=designation,
+                department=department,
+                phone_number=phone_number,
+                is_master_admin=is_master_admin,
+                role_id=role_id
+            )
+            
+            session.add(user)
+            session.commit()
+            return True
+            
+        except Exception as e:
+            if session:
+                session.rollback()
+            self.logger.error(f"Error creating user {email}: {e}")
+            return False
+        finally:
+            if session:
+                session.close()
+
+    def get_master_admin(self) -> Optional[User]:
+        """Get the master admin user"""
+        session = None
+        try:
+            session = self.Session()
+            return session.query(User).filter(User.is_master_admin == True).first()
+        except Exception as e:
+            self.logger.error(f"Error fetching master admin: {e}")
+            return None
+        finally:
+            if session:
+                session.close()
+
+    def count_users(self) -> int:
+        """Count total number of users"""
+        session = None
+        try:
+            session = self.Session()
+            return session.query(User).count()
+        except Exception as e:
+            self.logger.error(f"Error counting users: {e}")
+            return 0
+        finally:
+            if session:
+                session.close()
+
+    def get_users_by_designation(self, designation: str) -> List[User]:
+        """Get all users with a specific designation"""
+        session = None
+        try:
+            session = self.Session()
+            return session.query(User).filter(User.designation == designation).all()
+        except Exception as e:
+            self.logger.error(f"Error fetching users by designation {designation}: {e}")
+            return []
+        finally:
+            if session:
+                session.close()
+
     def update_user_status(self, user_id: int, new_status: str) -> bool:
         session = self.Session()
         try:
@@ -317,6 +434,22 @@ class DatabaseManager:
             if not user:
                 return False
             user.status = new_status
+            session.commit()
+            return True
+        except:
+            session.rollback()
+            return False
+        finally:
+            session.close()
+
+    def update_user_password(self, user_id: int, new_password_hash: str) -> bool:
+        """Update user password hash"""
+        session = self.Session()
+        try:
+            user = session.query(User).filter(User.id == user_id).first()
+            if not user:
+                return False
+            user.hashed_password = new_password_hash
             session.commit()
             return True
         except:

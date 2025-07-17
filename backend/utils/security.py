@@ -202,10 +202,10 @@ def check_rate_limit(client_ip: str) -> bool:
 
 def authenticate_user(username: str, password: str, db: DatabaseManager) -> Optional[Dict]:
     """
-    Authenticate user with username and password.
+    Authenticate user with username (email) and password.
     
     Args:
-        username: Username
+        username: User email (username field)
         password: Plain text password
         db: Database manager instance
         
@@ -219,12 +219,105 @@ def authenticate_user(username: str, password: str, db: DatabaseManager) -> Opti
     if user.status != "active":
         return None
     
-    if not verify_password(password, user.password_hash):
+    if not verify_password(password, user.hashed_password):
         return None
     
+    # Use the _role_name attribute or fallback to designation
+    role_name = getattr(user, '_role_name', None) or user.designation
+    
     return {
-        "username": user.username,
-        "role": user.role.role_name if user.role else "user",
+        "email": user.email,
+        "designation": user.designation,
+        "department": user.department,
+        "phone_number": user.phone_number,
+        "is_master_admin": user.is_master_admin,
         "status": user.status,
-        "user_id": user.id
+        "user_id": user.id,
+        "role": role_name
     }
+
+def require_master_admin(token_data: Dict = Depends(verify_token)) -> Dict:
+    """
+    Require master admin role for endpoint access.
+    
+    Args:
+        token_data: Token payload from verify_token
+        
+    Returns:
+        Token payload if user is master admin
+        
+    Raises:
+        HTTPException: If user is not master admin
+    """
+    if not token_data.get("is_master_admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Master admin privileges required"
+        )
+    return token_data
+
+def require_admin_or_master(token_data: Dict = Depends(verify_token)) -> Dict:
+    """
+    Require admin or master admin role for endpoint access.
+    
+    Args:
+        token_data: Token payload from verify_token
+        
+    Returns:
+        Token payload if user is admin or master admin
+        
+    Raises:
+        HTTPException: If user is not admin or master admin
+    """
+    designation = token_data.get("designation")
+    is_master_admin = token_data.get("is_master_admin")
+    
+    if designation != "admin" and not is_master_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required"
+        )
+    return token_data
+
+def can_create_admin(token_data: Dict = Depends(verify_token)) -> Dict:
+    """
+    Check if user can create admin accounts (only master admin can).
+    
+    Args:
+        token_data: Token payload from verify_token
+        
+    Returns:
+        Token payload if user can create admin accounts
+        
+    Raises:
+        HTTPException: If user cannot create admin accounts
+    """
+    if not token_data.get("is_master_admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only Master Admin can create admin accounts"
+        )
+    return token_data
+
+def can_create_employee(token_data: Dict = Depends(verify_token)) -> Dict:
+    """
+    Check if user can create employee accounts (admin or master admin can).
+    
+    Args:
+        token_data: Token payload from verify_token
+        
+    Returns:
+        Token payload if user can create employee accounts
+        
+    Raises:
+        HTTPException: If user cannot create employee accounts
+    """
+    designation = token_data.get("designation")
+    is_master_admin = token_data.get("is_master_admin")
+    
+    if designation != "admin" and not is_master_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required to create employee accounts"
+        )
+    return token_data
