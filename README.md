@@ -27,7 +27,7 @@ A comprehensive employee monitoring and management system with role-based access
 ### 🎯 Technical Features
 - **FastAPI backend** with async support
 - **Vue.js frontend** with modern UI
-- **SQLite database** (easily configurable)
+- **PostgreSQL database** with Docker support
 - **Real-time updates**
 - **Comprehensive API documentation**
 
@@ -37,15 +37,42 @@ A comprehensive employee monitoring and management system with role-based access
 - Python 3.8+
 - Node.js 16+
 - npm or yarn
+- PostgreSQL 12+ (or Docker)
 
 ### Backend Setup
+
+#### Option 1: Using Docker (Recommended)
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd employee-monitoring-system
+cd face-tracking-system-7
+
+# Start PostgreSQL with Docker
+docker-compose up -d postgres
 
 # Set up Python virtual environment
 cd backend
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the backend server
+python3 start.py
+```
+
+#### Option 2: Manual PostgreSQL Setup
+```bash
+# Clone the repository
+git clone <repository-url>
+cd face-tracking-system-7
+
+# Set up PostgreSQL database
+cd backend
+python3 setup_postgresql.py
+
+# Set up Python virtual environment
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
@@ -73,8 +100,8 @@ npm run dev
 
 ### Master Admin (Auto-created)
 ```
-📧 Email: admin@company.com
-🔑 Password: TempPass123!
+📧 Email: admin@facetracking.com
+🔑 Password: FaceTrack2024!
 ```
 
 > ⚠️ **Important**: Change the default password immediately after first login!
@@ -82,7 +109,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-employee-monitoring-system/
+face-tracking-system-7/
 ├── backend/                    # FastAPI backend
 │   ├── app/
 │   │   ├── dependencies/       # Authentication dependencies
@@ -183,7 +210,12 @@ python3 test_user_system.py
 ### Environment Variables
 Create a `.env` file in the backend directory:
 ```env
-DATABASE_URL=sqlite:///face_tracking.db
+DATABASE_URL=postgresql://postgres:password@localhost:5432/face_tracking
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=face_tracking
+DB_USER=postgres
+DB_PASSWORD=password
 SECRET_KEY=your-secret-key-here
 DEBUG=true
 ENVIRONMENT=development
@@ -193,9 +225,22 @@ ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 ### Database Configuration
-The system uses SQLite by default. To use PostgreSQL:
-```env
-DATABASE_URL=postgresql://user:password@localhost/dbname
+The system uses PostgreSQL as the primary database. Connection details:
+- **Host**: localhost
+- **Port**: 5432
+- **Database**: face_tracking
+- **User**: postgres
+- **Password**: password
+
+### Docker Services
+Start all services with Docker:
+```bash
+# Start PostgreSQL and pgAdmin
+docker-compose up -d
+
+# Access pgAdmin at http://localhost:5050
+# Email: admin@facetracking.com
+# Password: admin123
 ```
 
 ## 🚀 Deployment

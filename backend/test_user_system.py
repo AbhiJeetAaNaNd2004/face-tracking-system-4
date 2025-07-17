@@ -27,7 +27,7 @@ def test_user_service():
         print(f"✅ Master admin exists: {exists}")
         
         # Test 2: Try to authenticate master admin
-        user = user_service.authenticate_user("admin@company.com", "TempPass123!")
+        user = user_service.authenticate_user("admin@facetracking.com", "FaceTrack2024!")
         if user:
             print(f"✅ Master admin authentication successful: {user.email}")
             print(f"   - ID: {user.id}")
@@ -100,8 +100,8 @@ def test_api_endpoints():
     # Test 2: Login with master admin
     try:
         login_data = {
-            "email": "admin@company.com",
-            "password": "TempPass123!"
+            "email": "admin@facetracking.com",
+            "password": "FaceTrack2024!"
         }
         response = requests.post(f"{base_url}/users/login", json=login_data)
         if response.status_code == 200:

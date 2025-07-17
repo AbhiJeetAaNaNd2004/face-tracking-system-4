@@ -11,27 +11,18 @@ DATABASE_CONFIG = {
     'username': os.getenv('DB_USER', 'postgres'),
     'password': os.getenv('DB_PASSWORD', 'password')}
 
-# Use SQLite for simplicity
-DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///face_tracking.db')
-if DATABASE_URL.startswith('postgresql://'):
-    DATABASE_URL = f"postgresql://{DATABASE_CONFIG['username']}:{DATABASE_CONFIG['password']}@{DATABASE_CONFIG['host']}:{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['database']}"
-if DATABASE_URL.startswith('sqlite:'):
-    # SQLite configuration
-    engine = create_engine(
-        DATABASE_URL,
-        echo=False,
-        connect_args={"check_same_thread": False}
-    )
-else:
-    # PostgreSQL configuration
-    engine = create_engine(
-        DATABASE_URL,
-        poolclass=QueuePool,
-        pool_size=10,
-        max_overflow=20,
-        pool_pre_ping=True,
-        pool_recycle=3600,
-        echo=False)
+# Use PostgreSQL as primary database
+DATABASE_URL = os.getenv('DATABASE_URL', f"postgresql://{DATABASE_CONFIG['username']}:{DATABASE_CONFIG['password']}@{DATABASE_CONFIG['host']}:{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['database']}")
+# PostgreSQL configuration
+engine = create_engine(
+    DATABASE_URL,
+    poolclass=QueuePool,
+    pool_size=10,
+    max_overflow=20,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    echo=False
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 def get_db_session():

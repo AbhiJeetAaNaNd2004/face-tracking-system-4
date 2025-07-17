@@ -218,6 +218,10 @@ public
 *.sqlite3
 face_tracking.db
 
+# PostgreSQL dumps
+*.sql
+*.dump
+
 # IDE
 .vscode/
 .idea/

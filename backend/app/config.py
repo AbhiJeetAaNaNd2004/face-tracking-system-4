@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 from typing import List
 class Settings(BaseSettings):
     # Database Configuration
-    DATABASE_URL: str = "sqlite:///face_tracking.db"
+    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/face_tracking"
     DB_HOST: str = "localhost"
     DB_PORT: str = "5432"
     DB_NAME: str = "face_tracking"
@@ -39,8 +39,6 @@ class Settings(BaseSettings):
     LOG_RETENTION: str = "30 days"
     @property
     def DATABASE_URL_COMPUTED(self) -> str:
-        if self.DATABASE_URL.startswith('sqlite:'):
-            return self.DATABASE_URL
         return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     @property
     def CORS_ORIGINS(self) -> List[str]:

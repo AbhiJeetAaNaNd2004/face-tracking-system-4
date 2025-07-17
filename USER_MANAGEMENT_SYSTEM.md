@@ -45,9 +45,9 @@ On system startup, if no master admin exists:
 ```bash
 🔐 MASTER ADMIN ACCOUNT CREATED SUCCESSFULLY
 ======================================================================
-📧 Email: admin@company.com
-🔑 Password: TempPass123!
-🏢 Department: IT Administration
+📧 Email: admin@facetracking.com
+🔑 Password: FaceTrack2024!
+🏢 Department: System Administration
 📞 Phone: +1234567890
 ======================================================================
 ⚠️  IMPORTANT SECURITY NOTICE:
@@ -62,9 +62,9 @@ On system startup, if no master admin exists:
 ```bash
 POST /users/setup-master-admin
 {
-  "email": "admin@company.com",
-  "password": "SecurePass123!",
-  "department": "IT Administration",
+  "email": "admin@facetracking.com",
+  "password": "FaceTrack2024!",
+  "department": "System Administration",
   "phone_number": "+1234567890"
 }
 ```
@@ -152,9 +152,9 @@ POST   /users/{user_id}/change-password
 ### ✅ Service Layer Tests
 ```
 ✅ Master admin exists: True
-✅ Master admin authentication successful: admin@company.com
-✅ Regular admin created: regular.admin@company.com
-✅ Employee created: employee@company.com
+✅ Master admin authentication successful: admin@facetracking.com
+✅ Regular admin created: regular.admin@facetracking.com
+✅ Employee created: employee@facetracking.com
 ✅ User statistics: {'total_users': 3, 'total_admins': 2, 'total_employees': 1}
 ```
 
@@ -217,15 +217,15 @@ python3 start.py
 
 ### 2. Master Admin Credentials
 ```
-📧 Email: admin@company.com
-🔑 Password: TempPass123!
+📧 Email: admin@facetracking.com
+🔑 Password: FaceTrack2024!
 ```
 
 ### 3. Login and Create Users
 ```bash
 # Login as master admin
 curl -X POST -H "Content-Type: application/json" \
-  -d '{"email":"admin@company.com","password":"TempPass123!"}' \
+  -d '{"email":"admin@facetracking.com","password":"FaceTrack2024!"}' \
   http://localhost:8000/users/login
 
 # Create a regular admin
@@ -265,9 +265,9 @@ curl -X POST -H "Content-Type: application/json" \
 ## 📈 Usage Statistics
 
 ### Current System State
-- **1 Master Admin** (admin@company.com)
-- **1 Regular Admin** (regular.admin@company.com)
-- **1 Employee** (employee@company.com)
+- **1 Master Admin** (admin@facetracking.com)
+- **1 Regular Admin** (regular.admin@facetracking.com)
+- **1 Employee** (employee@facetracking.com)
 - **Total Users**: 3
 - **System Status**: ✅ Fully Operational
 

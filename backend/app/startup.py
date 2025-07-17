@@ -28,9 +28,9 @@ def setup_master_admin_if_needed():
         
         # Create master admin with default credentials
         master_admin_data = MasterAdminSetup(
-            email="admin@company.com",
-            password="TempPass123!",
-            department="IT Administration",
+            email="admin@facetracking.com",
+            password="FaceTrack2024!",
+            department="System Administration",
             phone_number="+1234567890"
         )
         
