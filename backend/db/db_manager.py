@@ -300,14 +300,14 @@ class DatabaseManager:
             if session:
                 session.close()
 
-    def create_user(self, username: str, password_hash: str, role_id: int) -> bool:
+    def create_user(self, username: str, password: str, role_id: int) -> bool:
         session = self.Session()
         try:
             new_user = User(
                 username=username,
-                password_hash=password_hash,
                 role_id=role_id
             )
+            new_user.set_password(password)
             session.add(new_user)
             session.commit()
             return True

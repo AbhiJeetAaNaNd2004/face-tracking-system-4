@@ -2,13 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends, status, Request
 from pydantic import BaseModel
 
 from utils.security import (
-    verify_token, 
-    require_admin, 
-    get_db_manager, 
-    create_access_token, 
-    authenticate_user, 
+    verify_token,
+    require_admin,
+    get_db_manager,
+    create_access_token,
+    authenticate_user,
     check_rate_limit,
-    hash_password
+    is_valid_email,
+    is_strong_password
 )
 from utils.logging import get_logger, log_authentication
 
@@ -37,10 +38,11 @@ class MessageResponse(BaseModel):
 class UserStatusRequest(BaseModel):
     new_status: str
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 class CreateUserRequest(BaseModel):
     username: str = Field(..., min_length=1, description="Username must not be empty")
+    email: EmailStr
     password: str = Field(..., min_length=1, description="Password must not be empty")
     role_id: int
 
@@ -54,7 +56,7 @@ def login(login_request: LoginRequest, request: Request, db=Depends(get_db_manag
     Includes rate limiting to prevent brute force attacks.
     """
     client_ip = request.client.host
-    
+
     # Check rate limiting
     if not check_rate_limit(client_ip):
         log_authentication(logger, login_request.username, False, client_ip)
@@ -62,17 +64,17 @@ def login(login_request: LoginRequest, request: Request, db=Depends(get_db_manag
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="Too many login attempts. Please try again later."
         )
-    
+
     # Authenticate user
     user_data = authenticate_user(login_request.username, login_request.password, db)
-    
+
     if not user_data:
         log_authentication(logger, login_request.username, False, client_ip)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password"
         )
-    
+
     # Create access token
     access_token = create_access_token({
         "sub": user_data["username"],
@@ -80,7 +82,7 @@ def login(login_request: LoginRequest, request: Request, db=Depends(get_db_manag
         "status": user_data["status"],
         "user_id": user_data["user_id"]
     })
-    
+
     log_authentication(logger, login_request.username, True, client_ip)
     return TokenResponse(access_token=access_token)
 
@@ -98,23 +100,23 @@ def admin_only_endpoint(current_user: dict = Depends(require_admin)):
 
 @router.patch("/users/{user_id}/status")
 def update_user_status(
-    user_id: int, 
-    status_request: UserStatusRequest, 
-    admin_user=Depends(require_admin), 
+    user_id: int,
+    status_request: UserStatusRequest,
+    admin_user=Depends(require_admin),
     db=Depends(get_db_manager)
 ):
     """Update user status (admin only)."""
     try:
         if status_request.new_status not in ["active", "inactive", "suspended"]:
             raise HTTPException(status_code=400, detail="Invalid status value")
-        
+
         success = db.update_user_status(user_id, status_request.new_status)
         if not success:
             raise HTTPException(status_code=404, detail="User not found")
-        
+
         logger.info(f"User {user_id} status updated to {status_request.new_status} by {admin_user.get('sub')}")
         return {"message": "User status updated successfully"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -123,27 +125,29 @@ def update_user_status(
 
 @router.post("/users/")
 def create_user(
-    user_request: CreateUserRequest, 
-    admin_user=Depends(require_admin), 
+    user_request: CreateUserRequest,
+    admin_user=Depends(require_admin),
     db=Depends(get_db_manager)
 ):
     """Create new user (admin only)."""
     try:
-        # Hash password before storing
-        hashed_password = hash_password(user_request.password)
-        
+        if not is_valid_email(user_request.email):
+            raise HTTPException(status_code=400, detail="Invalid email format")
+        if not is_strong_password(user_request.password):
+            raise HTTPException(status_code=400, detail="Password is not strong enough")
+
         success = db.create_user(
             username=user_request.username,
-            password_hash=hashed_password,
+            password=user_request.password,
             role_id=user_request.role_id
         )
-        
+
         if not success:
             raise HTTPException(status_code=400, detail="User creation failed")
-        
+
         logger.info(f"User {user_request.username} created by {admin_user.get('sub')}")
         return {"message": "User created successfully"}
-        
+
     except HTTPException:
         raise
     except Exception as e:

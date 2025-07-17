@@ -219,10 +219,13 @@ class StreamManager:
         # Increment stream count
         self.active_streams[camera_id] = current_streams + 1
         try:
+            video_source = settings.VIDEO_SOURCE
+            if video_source.isdigit():
+                video_source = int(video_source)
             # Initialize camera
-            cap = cv2.VideoCapture(camera_id)
+            cap = cv2.VideoCapture(video_source)
             if not cap.isOpened():
-                raise RuntimeError(f"Failed to open camera {camera_id}")
+                raise RuntimeError(f"Failed to open camera {video_source}")
             yield cap
         finally:
             # Cleanup

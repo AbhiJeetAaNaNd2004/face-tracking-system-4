@@ -160,19 +160,6 @@ def hash_password(password: str) -> str:
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(password_bytes, salt).decode('utf-8')
 
-def verify_password(password: str, hashed_password: str) -> bool:
-    """
-    Verify a password against its hash.
-    
-    Args:
-        password: Plain text password
-        hashed_password: Stored password hash
-        
-    Returns:
-        True if password matches, False otherwise
-    """
-    return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
-
 def check_rate_limit(client_ip: str) -> bool:
     """
     Check if client IP is within rate limit for login attempts.
@@ -200,6 +187,31 @@ def check_rate_limit(client_ip: str) -> bool:
     login_attempts[client_ip].append(current_time)
     return True
 
+import re
+
+def is_valid_email(email):
+    """Simple regex for email validation."""
+    regex = r'^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    return re.fullmatch(regex, email)
+
+def is_strong_password(password):
+    """
+    Checks for password strength:
+    - At least 8 characters
+    - At least one uppercase letter
+    - At least one lowercase letter
+    - At least one number
+    """
+    if len(password) < 8:
+        return False
+    if not re.search(r"[A-Z]", password):
+        return False
+    if not re.search(r"[a-z]", password):
+        return False
+    if not re.search(r"[0-9]", password):
+        return False
+    return True
+
 def authenticate_user(username: str, password: str, db: DatabaseManager) -> Optional[Dict]:
     """
     Authenticate user with username and password.
@@ -214,7 +226,7 @@ def authenticate_user(username: str, password: str, db: DatabaseManager) -> Opti
     """
     user = db.get_user_by_username(username)
     
-    if not user or user.status != "active" or not verify_password(password, user.password_hash):
+    if not user or user.status != "active" or not user.check_password(password):
         return None
     
     return {

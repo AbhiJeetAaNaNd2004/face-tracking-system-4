@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from db.db_config import Base
 import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Employee(Base):
     __tablename__ = 'employees'
@@ -85,14 +86,24 @@ class Role(Base):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     users = relationship("User", back_populates="role")
+from werkzeug.security import generate_password_hash, check_password_hash
+
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)
+    password_hash = Column(String(256), nullable=False)
     status = Column(String, default='active')  # active, inactive, suspended
     last_login_time = Column(DateTime)
     role_id = Column(Integer, ForeignKey('roles.id'))
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     role = relationship("Role", back_populates="users")
+
+    def set_password(self, password):
+        """Hashes the password and stores it."""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Checks if the provided password matches the hash."""
+        return check_password_hash(self.password_hash, password)
