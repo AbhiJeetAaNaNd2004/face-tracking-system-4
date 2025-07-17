@@ -37,9 +37,11 @@ class MessageResponse(BaseModel):
 class UserStatusRequest(BaseModel):
     new_status: str
 
+from pydantic import BaseModel, Field
+
 class CreateUserRequest(BaseModel):
-    username: str
-    password: str
+    username: str = Field(..., min_length=1, description="Username must not be empty")
+    password: str = Field(..., min_length=1, description="Password must not be empty")
     role_id: int
 
 

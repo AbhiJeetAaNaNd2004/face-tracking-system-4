@@ -299,6 +299,25 @@ class DatabaseManager:
         finally:
             if session:
                 session.close()
+
+    def create_user(self, username: str, password_hash: str, role_id: int) -> bool:
+        session = self.Session()
+        try:
+            new_user = User(
+                username=username,
+                password_hash=password_hash,
+                role_id=role_id
+            )
+            session.add(new_user)
+            session.commit()
+            return True
+        except Exception as e:
+            session.rollback()
+            self.logger.error(f"Error creating user: {e}")
+            return False
+        finally:
+            session.close()
+
     def get_user_by_username(self, username: str) -> Optional[User]:
         session = None
         try:

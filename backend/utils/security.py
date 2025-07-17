@@ -213,13 +213,8 @@ def authenticate_user(username: str, password: str, db: DatabaseManager) -> Opti
         User data dictionary if authenticated, None otherwise
     """
     user = db.get_user_by_username(username)
-    if not user:
-        return None
     
-    if user.status != "active":
-        return None
-    
-    if not verify_password(password, user.password_hash):
+    if not user or user.status != "active" or not verify_password(password, user.password_hash):
         return None
     
     return {
