@@ -9,9 +9,10 @@ import os
 # Add stubs to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.routers import streaming, embeddings, employees, attendance, auth
+from app.routers import streaming, embeddings, employees, attendance, auth, user_management
 from app.config import settings
 from utils.logging import setup_logging, get_logger, log_request
+from utils.master_admin_setup import initialize_master_admin_if_needed
 from tasks.camera_tasks import start_background_monitoring, stop_background_monitoring
 from db.db_config import create_tables
 
@@ -28,6 +29,10 @@ async def lifespan(app: FastAPI):
         # Initialize database tables
         create_tables()
         logger.info("✅ Database tables initialized")
+        
+        # Initialize Master Admin if needed
+        initialize_master_admin_if_needed()
+        logger.info("✅ Master Admin initialization completed")
         
         # Start background camera monitoring if enabled
         if settings.ENVIRONMENT != "testing":
@@ -94,6 +99,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router)
+app.include_router(user_management.router)
 app.include_router(streaming.router)
 app.include_router(embeddings.router)
 app.include_router(employees.router)

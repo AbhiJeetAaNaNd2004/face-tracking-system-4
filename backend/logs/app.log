@@ -295,3 +295,48 @@ connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection re
 2025-07-16 11:55:01 | INFO     | FaceTrackingSystem.app.main:35 | ✅ Background camera monitoring started
 2025-07-16 11:55:01 | INFO     | FaceTrackingSystem.app.main:37 | 🎯 Face Tracking System API is ready!
 2025-07-16 11:55:35 | INFO     | FaceTrackingSystem.app.main:115 | GET /docs - 200 - 0.000s
+2025-07-17 09:38:56 | ERROR    | FaceTrackingSystem.utils.master_admin_setup:83 | Failed to create Master Admin account
+2025-07-17 09:39:08 | INFO     | FaceTrackingSystem.utils.master_admin_setup:80 | Master Admin created successfully with email: admin@company.com
+2025-07-17 09:39:56 | INFO     | FaceTrackingSystem.app.main_user_system:25 | 🚀 Starting User Management System API
+2025-07-17 09:39:56 | INFO     | FaceTrackingSystem.app.main_user_system:30 | ✅ Database tables initialized
+2025-07-17 09:39:56 | INFO     | FaceTrackingSystem.utils.master_admin_setup:124 | System already has 2 user(s). Skipping Master Admin creation.
+2025-07-17 09:39:56 | INFO     | FaceTrackingSystem.app.main_user_system:34 | ✅ Master Admin initialization completed
+2025-07-17 09:39:56 | INFO     | FaceTrackingSystem.app.main_user_system:36 | 🎯 User Management System API is ready!
+2025-07-17 09:40:02 | INFO     | FaceTrackingSystem.app.main_user_system:115 | GET / - 200 - 0.000s
+2025-07-17 09:40:25 | INFO     | FaceTrackingSystem.app.main_user_system:45 | 🛑 Shutting down User Management System API
+2025-07-17 09:40:26 | INFO     | FaceTrackingSystem.app.main_user_system:25 | 🚀 Starting User Management System API
+2025-07-17 09:40:26 | INFO     | FaceTrackingSystem.app.main_user_system:30 | ✅ Database tables initialized
+2025-07-17 09:40:26 | INFO     | FaceTrackingSystem.utils.master_admin_setup:124 | System already has 2 user(s). Skipping Master Admin creation.
+2025-07-17 09:40:26 | INFO     | FaceTrackingSystem.app.main_user_system:34 | ✅ Master Admin initialization completed
+2025-07-17 09:40:26 | INFO     | FaceTrackingSystem.app.main_user_system:36 | 🎯 User Management System API is ready!
+2025-07-17 09:40:37 | INFO     | FaceTrackingSystem.app.main_user_system:45 | 🛑 Shutting down User Management System API
+2025-07-17 09:40:38 | INFO     | FaceTrackingSystem.app.main_user_system:25 | 🚀 Starting User Management System API
+2025-07-17 09:40:38 | INFO     | FaceTrackingSystem.app.main_user_system:30 | ✅ Database tables initialized
+2025-07-17 09:40:38 | INFO     | FaceTrackingSystem.utils.master_admin_setup:124 | System already has 2 user(s). Skipping Master Admin creation.
+2025-07-17 09:40:38 | INFO     | FaceTrackingSystem.app.main_user_system:34 | ✅ Master Admin initialization completed
+2025-07-17 09:40:38 | INFO     | FaceTrackingSystem.app.main_user_system:36 | 🎯 User Management System API is ready!
+2025-07-17 09:40:45 | INFO     | FaceTrackingSystem.app.main_user_system:45 | 🛑 Shutting down User Management System API
+2025-07-17 09:40:45 | INFO     | FaceTrackingSystem.app.main_user_system:25 | 🚀 Starting User Management System API
+2025-07-17 09:40:45 | INFO     | FaceTrackingSystem.app.main_user_system:30 | ✅ Database tables initialized
+2025-07-17 09:40:45 | INFO     | FaceTrackingSystem.utils.master_admin_setup:124 | System already has 2 user(s). Skipping Master Admin creation.
+2025-07-17 09:40:45 | INFO     | FaceTrackingSystem.app.main_user_system:34 | ✅ Master Admin initialization completed
+2025-07-17 09:40:45 | INFO     | FaceTrackingSystem.app.main_user_system:36 | 🎯 User Management System API is ready!
+2025-07-17 09:40:54 | INFO     | FaceTrackingSystem.app.routers.auth:147 | Authentication SUCCESS for user 'admin@company.com' from IP 127.0.0.1
+2025-07-17 09:40:54 | INFO     | FaceTrackingSystem.app.main_user_system:115 | POST /auth/login/ - 200 - 0.231s
+2025-07-17 09:41:02 | INFO     | FaceTrackingSystem.app.routers.user_management:216 | Employee john.doe@company.com created by admin@company.com
+2025-07-17 09:41:02 | INFO     | FaceTrackingSystem.app.main_user_system:115 | POST /user-management/create-employee - 200 - 0.236s
+2025-07-17 09:41:11 | INFO     | FaceTrackingSystem.app.routers.user_management:164 | Admin admin.user@company.com created by Master Admin admin@company.com
+2025-07-17 09:41:11 | INFO     | FaceTrackingSystem.app.main_user_system:115 | POST /user-management/create-admin - 200 - 0.234s
+2025-07-17 09:41:20 | INFO     | FaceTrackingSystem.app.main_user_system:115 | GET /user-management/users - 200 - 0.007s
+2025-07-17 09:41:27 | INFO     | FaceTrackingSystem.app.main_user_system:115 | GET /user-management/access-rights - 200 - 0.001s
+2025-07-17 09:41:32 | INFO     | FaceTrackingSystem.app.routers.auth:147 | Authentication SUCCESS for user 'admin.user@company.com' from IP 127.0.0.1
+2025-07-17 09:41:32 | INFO     | FaceTrackingSystem.app.main_user_system:115 | POST /auth/login/ - 200 - 0.226s
+2025-07-17 09:41:41 | INFO     | FaceTrackingSystem.app.main_user_system:115 | GET /user-management/access-rights - 200 - 0.001s
+2025-07-17 09:41:49 | WARNING  | FaceTrackingSystem.app.main_user_system:115 | POST /user-management/create-admin - 403 - 0.002s
+2025-07-17 09:41:58 | INFO     | FaceTrackingSystem.app.routers.user_management:216 | Employee jane.smith@company.com created by admin.user@company.com
+2025-07-17 09:41:58 | INFO     | FaceTrackingSystem.app.main_user_system:115 | POST /user-management/create-employee - 200 - 0.234s
+2025-07-17 09:42:04 | INFO     | FaceTrackingSystem.app.routers.auth:147 | Authentication SUCCESS for user 'john.doe@company.com' from IP 127.0.0.1
+2025-07-17 09:42:04 | INFO     | FaceTrackingSystem.app.main_user_system:115 | POST /auth/login/ - 200 - 0.223s
+2025-07-17 09:42:12 | INFO     | FaceTrackingSystem.app.main_user_system:115 | GET /user-management/access-rights - 200 - 0.001s
+2025-07-17 09:42:20 | WARNING  | FaceTrackingSystem.app.main_user_system:115 | POST /user-management/create-employee - 403 - 0.001s
+2025-07-17 09:42:25 | INFO     | FaceTrackingSystem.app.main_user_system:115 | GET /docs - 200 - 0.000s
